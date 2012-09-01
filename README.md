@@ -1,12 +1,13 @@
-POPCORN COMPILER 			dsrb@Skywalker IST-TP LEIC n.º 65893  - 2010
--------------------
+POPCORN COMPILER
+================
 
 Release Notes:
 
-	This Implementation of Popcorn Compiler has a limit on block 
+This Implementation of Popcorn Compiler has a limit on block 
 indentation level : it is set to a maximum value of 80 blocks. There
 are some security checks and warnings although.
-	Due to yylineno constant change, the yyerror messages may not
+
+Due to yylineno constant change, the yyerror messages may not
 always acurate.
 
 
