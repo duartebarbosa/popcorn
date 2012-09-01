@@ -1,0 +1,31 @@
+ID=run
+VER=0e
+LANG=$(ID)
+DIR=$$HOME/lib
+CFLAGS=-g
+BID=$(ID)-$(VER)
+
+OS=win.obj
+
+NASM=nasm -felf
+YACC=byacc
+LEX=flex -l
+
+all: lib$(LANG).lib
+
+lib$(LANG).a: lib.obj dbl.obj $(OS)
+	lib $@ $?
+
+install: lib$(LANG).lib
+	copy $? $(DIR)
+
+.SUFFIXES: .asm
+.asm.obj:
+	$(NASM) $<
+
+backup: clean
+	PWD=`pwd`; CWD=`basename $$PWD`; cd ..; tar cf - $$CWD | gzip -9 > $@/$(BID).tgz
+
+
+clean:
+	rm -f lib$(LANG).lib *.obj

@@ -1,0 +1,9 @@
+const str := ' end'
+start()
+	var a
+	'Indique um numero: '!
+	if a? = 1 then
+		-3+a+str!!
+	endif
+	start:=0
+end

@@ -1,0 +1,4863 @@
+   0  $accept : start $end
+
+   1  start : program
+
+   2  program : function_definition
+   3          | declaration NEWLINE
+   4          | program function_definition
+   5          | program declaration NEWLINE
+   6          | error NEWLINE
+
+   7  declaration : const
+   8              | EXTERN id_fn_list
+   9              | EXTERN INTEGER id_fn_list
+  10              | EXTERN REAL id_fn_list
+  11              | INIT ID '=' '[' number_list ']'
+  12              | INIT INTEGER ID '=' '[' number_list ']'
+  13              | INIT REAL ID '=' '[' number_list ']'
+
+  14  const : CONST multi_atrib
+  15        | CONST ID '=' '[' number_list ']'
+
+  16  multi_atrib : ID '=' value
+  17              | ID ',' multi_atrib ',' value
+
+  18  function_definition : INTEGER function NEWLINE NEWBLOCK compound_statement END NEWLINE
+  19                      | REAL function NEWLINE NEWBLOCK compound_statement END NEWLINE
+  20                      | function NEWLINE NEWBLOCK compound_statement END NEWLINE
+  21                      | error END NEWLINE
+
+  22  function : ID '(' id_list ')'
+  23           | ID '(' ')'
+  24           | ID '(' error ')'
+
+  25  compound_statement : const_list NEWLINE decl_var_list statement_list
+  26                     | const_list NEWLINE statement_list
+  27                     | decl_var_list statement_list
+  28                     | statement_list
+
+  29  statement : OLDBLOCK
+  30            | NEWBLOCK
+  31            | NEWLINE
+  32            | if_statement NEWLINE
+  33            | while_statement NEWLINE
+  34            | do_while_statement NEWLINE
+  35            | for_statement NEWLINE
+  36            | expression NEWLINE
+  37            | '[' ID ']' EQ_OP expression NEWLINE
+
+  38  extra_statement : statement
+  39                  | CONTINUE NEWLINE
+  40                  | CONTINUE INT_NUMBER NEWLINE
+  41                  | BREAK NEWLINE
+  42                  | BREAK INT_NUMBER NEWLINE
+
+  43  ultra_statement : NEWLINE NEWBLOCK decl_var_list extra_statement_list
+  44                  | NEWLINE NEWBLOCK extra_statement_list
+
+  45  bonus_statement : NEWLINE NEWBLOCK decl_var_list statement_list
+  46                  | NEWLINE NEWBLOCK statement_list
+
+  47  while_statement : WHILE expression DO ultra_statement DONE
+  48                  | WHILE expression DO ultra_statement ELSE bonus_statement DONE
+  49                  | WHILE error DONE
+
+  50  do_while_statement : DO ultra_statement UNTIL expression DONE
+  51                     | DO ultra_statement UNTIL expression ELSE bonus_statement DONE
+  52                     | DO error DONE
+
+  53  for_statement : FOR for_start cond iter DO ultra_statement DONE
+  54                | FOR for_start cond iter DO NEWLINE DONE
+  55                | FOR error DONE
+
+  56  for_start : expression_list ';'
+  57            | ';'
+
+  58  cond : expression ';'
+  59       | ';'
+
+  60  iter : expression_list
+  61       |
+
+  62  if_statement : IF expression THEN ultra_statement ENDIF
+  63               | IF expression THEN ultra_statement elif_statement ENDIF
+  64               | IF expression THEN ultra_statement ELSE bonus_statement ENDIF
+  65               | IF expression THEN ultra_statement elif_statement ELSE bonus_statement ENDIF
+  66               | error ENDIF
+
+  67  elif_def : ELIF expression THEN ultra_statement
+
+  68  elif_statement : elif_def
+  69                 | elif_statement elif_def
+
+  70  decl_var : VAR array_id_list NEWLINE
+  71           | VAR INTEGER array_id_list NEWLINE
+  72           | VAR REAL array_id_list NEWLINE
+  73           | VAR error NEWLINE
+
+  74  expression : function_call
+  75             | '(' expression ')'
+  76             | INC lvalue
+  77             | DEC lvalue
+  78             | lvalue INC
+  79             | lvalue DEC
+  80             | expression '+' expression
+  81             | expression '-' expression
+  82             | expression '*' expression
+  83             | expression '/' expression
+  84             | expression EXP expression
+  85             | expression '%' expression
+  86             | lvalue '=' expression
+  87             | lvalue ADDEDATTRIB expression
+  88             | expression AND_OP expression
+  89             | expression OR_OP expression
+  90             | expression EQ_OP expression
+  91             | expression NE_OP expression
+  92             | expression GE_OP expression
+  93             | expression LE_OP expression
+  94             | expression '<' expression
+  95             | expression '>' expression
+  96             | expression IMPLICA expression
+  97             | '+' expression
+  98             | '-' expression
+  99             | '@' lvalue
+ 100             | NOT expression
+ 101             | expression '!'
+ 102             | expression OUT
+ 103             | lvalue '?'
+ 104             | STR
+ 105             | lvalue
+ 106             | number
+
+ 107  lvalue : ID
+ 108         | ID '[' expression ']'
+
+ 109  function_call : ID '(' expression_list ')'
+ 110                | ID '(' ')'
+
+ 111  number : INT_NUMBER
+ 112         | REAL_NUMBER
+
+ 113  value : number
+ 114        | STR
+
+ 115  number_list : number
+ 116              | '-' number
+ 117              | number_list ',' number
+ 118              | number_list ',' '-' number
+
+ 119  id_list : ID
+ 120          | id_list ',' ID
+
+ 121  id_fn_list : ID
+ 122             | function
+ 123             | id_fn_list ',' ID
+ 124             | id_fn_list ',' function
+
+ 125  array_id_list : lvalue
+ 126                | ID '[' ']'
+ 127                | array_id_list ',' ID '[' ']'
+ 128                | array_id_list ',' lvalue
+
+ 129  expression_list : expression
+ 130                  | expression_list ',' expression
+
+ 131  decl_var_list : decl_var
+ 132                | decl_var_list decl_var
+
+ 133  const_list : const
+ 134             | const_list NEWLINE const
+
+ 135  extra_statement_list : extra_statement
+ 136                       | extra_statement_list extra_statement
+
+ 137  statement_list : statement
+ 138                 | statement_list statement
+
+state 0
+	$accept : . start $end  (0)
+
+	error  shift 1
+	INTEGER  shift 2
+	CONST  shift 3
+	ID  shift 4
+	EXTERN  shift 5
+	REAL  shift 6
+	INIT  shift 7
+	.  error
+
+	start  goto 8
+	program  goto 9
+	const  goto 10
+	function  goto 11
+	function_definition  goto 12
+	declaration  goto 13
+
+
+state 1
+	program : error . NEWLINE  (6)
+	function_definition : error . END NEWLINE  (21)
+
+	END  shift 14
+	NEWLINE  shift 15
+	.  error
+
+
+state 2
+	function_definition : INTEGER . function NEWLINE NEWBLOCK compound_statement END NEWLINE  (18)
+
+	ID  shift 4
+	.  error
+
+	function  goto 16
+
+
+state 3
+	const : CONST . multi_atrib  (14)
+	const : CONST . ID '=' '[' number_list ']'  (15)
+
+	ID  shift 17
+	.  error
+
+	multi_atrib  goto 18
+
+
+state 4
+	function : ID . '(' id_list ')'  (22)
+	function : ID . '(' ')'  (23)
+	function : ID . '(' error ')'  (24)
+
+	'('  shift 19
+	.  error
+
+
+state 5
+	declaration : EXTERN . id_fn_list  (8)
+	declaration : EXTERN . INTEGER id_fn_list  (9)
+	declaration : EXTERN . REAL id_fn_list  (10)
+
+	INTEGER  shift 20
+	ID  shift 21
+	REAL  shift 22
+	.  error
+
+	function  goto 23
+	id_fn_list  goto 24
+
+
+state 6
+	function_definition : REAL . function NEWLINE NEWBLOCK compound_statement END NEWLINE  (19)
+
+	ID  shift 4
+	.  error
+
+	function  goto 25
+
+
+state 7
+	declaration : INIT . ID '=' '[' number_list ']'  (11)
+	declaration : INIT . INTEGER ID '=' '[' number_list ']'  (12)
+	declaration : INIT . REAL ID '=' '[' number_list ']'  (13)
+
+	INTEGER  shift 26
+	ID  shift 27
+	REAL  shift 28
+	.  error
+
+
+state 8
+	$accept : start . $end  (0)
+
+	$end  accept
+
+
+state 9
+	start : program .  (1)
+	program : program . function_definition  (4)
+	program : program . declaration NEWLINE  (5)
+
+	error  shift 29
+	INTEGER  shift 2
+	CONST  shift 3
+	ID  shift 4
+	EXTERN  shift 5
+	REAL  shift 6
+	INIT  shift 7
+	$end  reduce 1
+
+	const  goto 10
+	function  goto 11
+	function_definition  goto 30
+	declaration  goto 31
+
+
+state 10
+	declaration : const .  (7)
+
+	.  reduce 7
+
+
+state 11
+	function_definition : function . NEWLINE NEWBLOCK compound_statement END NEWLINE  (20)
+
+	NEWLINE  shift 32
+	.  error
+
+
+state 12
+	program : function_definition .  (2)
+
+	.  reduce 2
+
+
+state 13
+	program : declaration . NEWLINE  (3)
+
+	NEWLINE  shift 33
+	.  error
+
+
+state 14
+	function_definition : error END . NEWLINE  (21)
+
+	NEWLINE  shift 34
+	.  error
+
+
+state 15
+	program : error NEWLINE .  (6)
+
+	.  reduce 6
+
+
+state 16
+	function_definition : INTEGER function . NEWLINE NEWBLOCK compound_statement END NEWLINE  (18)
+
+	NEWLINE  shift 35
+	.  error
+
+
+state 17
+	const : CONST ID . '=' '[' number_list ']'  (15)
+	multi_atrib : ID . '=' value  (16)
+	multi_atrib : ID . ',' multi_atrib ',' value  (17)
+
+	'='  shift 36
+	','  shift 37
+	.  error
+
+
+state 18
+	const : CONST multi_atrib .  (14)
+
+	.  reduce 14
+
+
+state 19
+	function : ID '(' . id_list ')'  (22)
+	function : ID '(' . ')'  (23)
+	function : ID '(' . error ')'  (24)
+
+	error  shift 38
+	ID  shift 39
+	')'  shift 40
+	.  error
+
+	id_list  goto 41
+
+
+state 20
+	declaration : EXTERN INTEGER . id_fn_list  (9)
+
+	ID  shift 21
+	.  error
+
+	function  goto 23
+	id_fn_list  goto 42
+
+
+state 21
+	function : ID . '(' id_list ')'  (22)
+	function : ID . '(' ')'  (23)
+	function : ID . '(' error ')'  (24)
+	id_fn_list : ID .  (121)
+
+	'('  shift 19
+	NEWLINE  reduce 121
+	','  reduce 121
+
+
+state 22
+	declaration : EXTERN REAL . id_fn_list  (10)
+
+	ID  shift 21
+	.  error
+
+	function  goto 23
+	id_fn_list  goto 43
+
+
+state 23
+	id_fn_list : function .  (122)
+
+	.  reduce 122
+
+
+state 24
+	declaration : EXTERN id_fn_list .  (8)
+	id_fn_list : id_fn_list . ',' ID  (123)
+	id_fn_list : id_fn_list . ',' function  (124)
+
+	','  shift 44
+	NEWLINE  reduce 8
+
+
+state 25
+	function_definition : REAL function . NEWLINE NEWBLOCK compound_statement END NEWLINE  (19)
+
+	NEWLINE  shift 45
+	.  error
+
+
+state 26
+	declaration : INIT INTEGER . ID '=' '[' number_list ']'  (12)
+
+	ID  shift 46
+	.  error
+
+
+state 27
+	declaration : INIT ID . '=' '[' number_list ']'  (11)
+
+	'='  shift 47
+	.  error
+
+
+state 28
+	declaration : INIT REAL . ID '=' '[' number_list ']'  (13)
+
+	ID  shift 48
+	.  error
+
+
+state 29
+	function_definition : error . END NEWLINE  (21)
+
+	END  shift 14
+	.  error
+
+
+state 30
+	program : program function_definition .  (4)
+
+	.  reduce 4
+
+
+state 31
+	program : program declaration . NEWLINE  (5)
+
+	NEWLINE  shift 49
+	.  error
+
+
+state 32
+	function_definition : function NEWLINE . NEWBLOCK compound_statement END NEWLINE  (20)
+
+	NEWBLOCK  shift 50
+	.  error
+
+
+state 33
+	program : declaration NEWLINE .  (3)
+
+	.  reduce 3
+
+
+state 34
+	function_definition : error END NEWLINE .  (21)
+
+	.  reduce 21
+
+
+state 35
+	function_definition : INTEGER function NEWLINE . NEWBLOCK compound_statement END NEWLINE  (18)
+
+	NEWBLOCK  shift 51
+	.  error
+
+
+state 36
+	const : CONST ID '=' . '[' number_list ']'  (15)
+	multi_atrib : ID '=' . value  (16)
+
+	INT_NUMBER  shift 52
+	STR  shift 53
+	REAL_NUMBER  shift 54
+	'['  shift 55
+	.  error
+
+	number  goto 56
+	value  goto 57
+
+
+state 37
+	multi_atrib : ID ',' . multi_atrib ',' value  (17)
+
+	ID  shift 58
+	.  error
+
+	multi_atrib  goto 59
+
+
+state 38
+	function : ID '(' error . ')'  (24)
+
+	')'  shift 60
+	.  error
+
+
+state 39
+	id_list : ID .  (119)
+
+	.  reduce 119
+
+
+state 40
+	function : ID '(' ')' .  (23)
+
+	.  reduce 23
+
+
+state 41
+	function : ID '(' id_list . ')'  (22)
+	id_list : id_list . ',' ID  (120)
+
+	','  shift 61
+	')'  shift 62
+	.  error
+
+
+state 42
+	declaration : EXTERN INTEGER id_fn_list .  (9)
+	id_fn_list : id_fn_list . ',' ID  (123)
+	id_fn_list : id_fn_list . ',' function  (124)
+
+	','  shift 44
+	NEWLINE  reduce 9
+
+
+state 43
+	declaration : EXTERN REAL id_fn_list .  (10)
+	id_fn_list : id_fn_list . ',' ID  (123)
+	id_fn_list : id_fn_list . ',' function  (124)
+
+	','  shift 44
+	NEWLINE  reduce 10
+
+
+state 44
+	id_fn_list : id_fn_list ',' . ID  (123)
+	id_fn_list : id_fn_list ',' . function  (124)
+
+	ID  shift 63
+	.  error
+
+	function  goto 64
+
+
+state 45
+	function_definition : REAL function NEWLINE . NEWBLOCK compound_statement END NEWLINE  (19)
+
+	NEWBLOCK  shift 65
+	.  error
+
+
+state 46
+	declaration : INIT INTEGER ID . '=' '[' number_list ']'  (12)
+
+	'='  shift 66
+	.  error
+
+
+state 47
+	declaration : INIT ID '=' . '[' number_list ']'  (11)
+
+	'['  shift 67
+	.  error
+
+
+state 48
+	declaration : INIT REAL ID . '=' '[' number_list ']'  (13)
+
+	'='  shift 68
+	.  error
+
+
+state 49
+	program : program declaration NEWLINE .  (5)
+
+	.  reduce 5
+
+
+state 50
+	function_definition : function NEWLINE NEWBLOCK . compound_statement END NEWLINE  (20)
+
+	error  shift 69
+	CONST  shift 3
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	VAR  shift 78
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	.  error
+
+	expression  goto 88
+	statement  goto 89
+	statement_list  goto 90
+	const  goto 91
+	compound_statement  goto 92
+	const_list  goto 93
+	decl_var_list  goto 94
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	decl_var  goto 98
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 51
+	function_definition : INTEGER function NEWLINE NEWBLOCK . compound_statement END NEWLINE  (18)
+
+	error  shift 69
+	CONST  shift 3
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	VAR  shift 78
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	.  error
+
+	expression  goto 88
+	statement  goto 89
+	statement_list  goto 90
+	const  goto 91
+	compound_statement  goto 103
+	const_list  goto 93
+	decl_var_list  goto 94
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	decl_var  goto 98
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 52
+	number : INT_NUMBER .  (111)
+
+	.  reduce 111
+
+
+state 53
+	value : STR .  (114)
+
+	.  reduce 114
+
+
+state 54
+	number : REAL_NUMBER .  (112)
+
+	.  reduce 112
+
+
+state 55
+	const : CONST ID '=' '[' . number_list ']'  (15)
+
+	INT_NUMBER  shift 52
+	REAL_NUMBER  shift 54
+	'-'  shift 104
+	.  error
+
+	number_list  goto 105
+	number  goto 106
+
+
+state 56
+	value : number .  (113)
+
+	.  reduce 113
+
+
+state 57
+	multi_atrib : ID '=' value .  (16)
+
+	.  reduce 16
+
+
+state 58
+	multi_atrib : ID . '=' value  (16)
+	multi_atrib : ID . ',' multi_atrib ',' value  (17)
+
+	'='  shift 107
+	','  shift 37
+	.  error
+
+
+state 59
+	multi_atrib : ID ',' multi_atrib . ',' value  (17)
+
+	','  shift 108
+	.  error
+
+
+state 60
+	function : ID '(' error ')' .  (24)
+
+	.  reduce 24
+
+
+state 61
+	id_list : id_list ',' . ID  (120)
+
+	ID  shift 109
+	.  error
+
+
+state 62
+	function : ID '(' id_list ')' .  (22)
+
+	.  reduce 22
+
+
+state 63
+	function : ID . '(' id_list ')'  (22)
+	function : ID . '(' ')'  (23)
+	function : ID . '(' error ')'  (24)
+	id_fn_list : id_fn_list ',' ID .  (123)
+
+	'('  shift 19
+	NEWLINE  reduce 123
+	','  reduce 123
+
+
+state 64
+	id_fn_list : id_fn_list ',' function .  (124)
+
+	.  reduce 124
+
+
+state 65
+	function_definition : REAL function NEWLINE NEWBLOCK . compound_statement END NEWLINE  (19)
+
+	error  shift 69
+	CONST  shift 3
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	VAR  shift 78
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	.  error
+
+	expression  goto 88
+	statement  goto 89
+	statement_list  goto 90
+	const  goto 91
+	compound_statement  goto 110
+	const_list  goto 93
+	decl_var_list  goto 94
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	decl_var  goto 98
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 66
+	declaration : INIT INTEGER ID '=' . '[' number_list ']'  (12)
+
+	'['  shift 111
+	.  error
+
+
+state 67
+	declaration : INIT ID '=' '[' . number_list ']'  (11)
+
+	INT_NUMBER  shift 52
+	REAL_NUMBER  shift 54
+	'-'  shift 104
+	.  error
+
+	number_list  goto 112
+	number  goto 106
+
+
+state 68
+	declaration : INIT REAL ID '=' . '[' number_list ']'  (13)
+
+	'['  shift 113
+	.  error
+
+
+state 69
+	if_statement : error . ENDIF  (66)
+
+	ENDIF  shift 114
+	.  error
+
+
+state 70
+	lvalue : ID .  (107)
+	lvalue : ID . '[' expression ']'  (108)
+	function_call : ID . '(' expression_list ')'  (109)
+	function_call : ID . '(' ')'  (110)
+
+	'['  shift 115
+	'('  shift 116
+	'!'  reduce 107
+	OUT  reduce 107
+	'?'  reduce 107
+	ELSE  reduce 107
+	THEN  reduce 107
+	DO  reduce 107
+	DONE  reduce 107
+	NEWLINE  reduce 107
+	'='  reduce 107
+	ADDEDATTRIB  reduce 107
+	OR_OP  reduce 107
+	AND_OP  reduce 107
+	EQ_OP  reduce 107
+	NE_OP  reduce 107
+	IMPLICA  reduce 107
+	'<'  reduce 107
+	'>'  reduce 107
+	GE_OP  reduce 107
+	LE_OP  reduce 107
+	'+'  reduce 107
+	'-'  reduce 107
+	'*'  reduce 107
+	'/'  reduce 107
+	'%'  reduce 107
+	INC  reduce 107
+	DEC  reduce 107
+	EXP  reduce 107
+	']'  reduce 107
+	','  reduce 107
+	')'  reduce 107
+	';'  reduce 107
+
+
+state 71
+	expression : STR .  (104)
+
+	.  reduce 104
+
+
+state 72
+	if_statement : IF . expression THEN ultra_statement ENDIF  (62)
+	if_statement : IF . expression THEN ultra_statement elif_statement ENDIF  (63)
+	if_statement : IF . expression THEN ultra_statement ELSE bonus_statement ENDIF  (64)
+	if_statement : IF . expression THEN ultra_statement elif_statement ELSE bonus_statement ENDIF  (65)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 117
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 73
+	do_while_statement : DO . ultra_statement UNTIL expression DONE  (50)
+	do_while_statement : DO . ultra_statement UNTIL expression ELSE bonus_statement DONE  (51)
+	do_while_statement : DO . error DONE  (52)
+
+	error  shift 118
+	NEWLINE  shift 119
+	.  error
+
+	ultra_statement  goto 120
+
+
+state 74
+	while_statement : WHILE . expression DO ultra_statement DONE  (47)
+	while_statement : WHILE . expression DO ultra_statement ELSE bonus_statement DONE  (48)
+	while_statement : WHILE . error DONE  (49)
+
+	error  shift 121
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 122
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 75
+	statement : NEWLINE .  (31)
+
+	.  reduce 31
+
+
+state 76
+	statement : NEWBLOCK .  (30)
+
+	.  reduce 30
+
+
+state 77
+	statement : OLDBLOCK .  (29)
+
+	.  reduce 29
+
+
+state 78
+	decl_var : VAR . array_id_list NEWLINE  (70)
+	decl_var : VAR . INTEGER array_id_list NEWLINE  (71)
+	decl_var : VAR . REAL array_id_list NEWLINE  (72)
+	decl_var : VAR . error NEWLINE  (73)
+
+	error  shift 123
+	INTEGER  shift 124
+	ID  shift 125
+	REAL  shift 126
+	.  error
+
+	array_id_list  goto 127
+	lvalue  goto 128
+
+
+state 79
+	expression : '+' . expression  (97)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 129
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 80
+	expression : '-' . expression  (98)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 130
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 81
+	expression : INC . lvalue  (76)
+
+	ID  shift 131
+	.  error
+
+	lvalue  goto 132
+
+
+state 82
+	expression : DEC . lvalue  (77)
+
+	ID  shift 131
+	.  error
+
+	lvalue  goto 133
+
+
+state 83
+	expression : NOT . expression  (100)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 134
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 84
+	expression : '@' . lvalue  (99)
+
+	ID  shift 131
+	.  error
+
+	lvalue  goto 135
+
+
+state 85
+	for_statement : FOR . for_start cond iter DO ultra_statement DONE  (53)
+	for_statement : FOR . for_start cond iter DO NEWLINE DONE  (54)
+	for_statement : FOR . error DONE  (55)
+
+	error  shift 136
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	';'  shift 137
+	.  error
+
+	expression  goto 138
+	expression_list  goto 139
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_start  goto 140
+
+
+state 86
+	statement : '[' . ID ']' EQ_OP expression NEWLINE  (37)
+
+	ID  shift 141
+	.  error
+
+
+state 87
+	expression : '(' . expression ')'  (75)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 142
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 88
+	statement : expression . NEWLINE  (36)
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	'!'  shift 143
+	OUT  shift 144
+	NEWLINE  shift 145
+	OR_OP  shift 146
+	AND_OP  shift 147
+	EQ_OP  shift 148
+	NE_OP  shift 149
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	.  error
+
+
+state 89
+	statement_list : statement .  (137)
+
+	.  reduce 137
+
+
+state 90
+	compound_statement : statement_list .  (28)
+	statement_list : statement_list . statement  (138)
+
+	error  shift 69
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	END  reduce 28
+
+	expression  goto 88
+	statement  goto 161
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 91
+	const_list : const .  (133)
+
+	.  reduce 133
+
+
+state 92
+	function_definition : function NEWLINE NEWBLOCK compound_statement . END NEWLINE  (20)
+
+	END  shift 162
+	.  error
+
+
+state 93
+	compound_statement : const_list . NEWLINE decl_var_list statement_list  (25)
+	compound_statement : const_list . NEWLINE statement_list  (26)
+	const_list : const_list . NEWLINE const  (134)
+
+	NEWLINE  shift 163
+	.  error
+
+
+state 94
+	compound_statement : decl_var_list . statement_list  (27)
+	decl_var_list : decl_var_list . decl_var  (132)
+
+	error  shift 69
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	VAR  shift 78
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	.  error
+
+	expression  goto 88
+	statement  goto 89
+	statement_list  goto 164
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	decl_var  goto 165
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 95
+	statement : if_statement . NEWLINE  (32)
+
+	NEWLINE  shift 166
+	.  error
+
+
+state 96
+	statement : while_statement . NEWLINE  (33)
+
+	NEWLINE  shift 167
+	.  error
+
+
+state 97
+	statement : do_while_statement . NEWLINE  (34)
+
+	NEWLINE  shift 168
+	.  error
+
+
+state 98
+	decl_var_list : decl_var .  (131)
+
+	.  reduce 131
+
+
+state 99
+	expression : function_call .  (74)
+
+	.  reduce 74
+
+
+state 100
+	expression : lvalue . INC  (78)
+	expression : lvalue . DEC  (79)
+	expression : lvalue . '=' expression  (86)
+	expression : lvalue . ADDEDATTRIB expression  (87)
+	expression : lvalue . '?'  (103)
+	expression : lvalue .  (105)
+
+	'?'  shift 169
+	'='  shift 170
+	ADDEDATTRIB  shift 171
+	INC  shift 172
+	DEC  shift 173
+	'!'  reduce 105
+	OUT  reduce 105
+	ELSE  reduce 105
+	THEN  reduce 105
+	DO  reduce 105
+	DONE  reduce 105
+	NEWLINE  reduce 105
+	OR_OP  reduce 105
+	AND_OP  reduce 105
+	EQ_OP  reduce 105
+	NE_OP  reduce 105
+	IMPLICA  reduce 105
+	'<'  reduce 105
+	'>'  reduce 105
+	GE_OP  reduce 105
+	LE_OP  reduce 105
+	'+'  reduce 105
+	'-'  reduce 105
+	'*'  reduce 105
+	'/'  reduce 105
+	'%'  reduce 105
+	EXP  reduce 105
+	']'  reduce 105
+	','  reduce 105
+	')'  reduce 105
+	';'  reduce 105
+
+
+state 101
+	expression : number .  (106)
+
+	.  reduce 106
+
+
+state 102
+	statement : for_statement . NEWLINE  (35)
+
+	NEWLINE  shift 174
+	.  error
+
+
+state 103
+	function_definition : INTEGER function NEWLINE NEWBLOCK compound_statement . END NEWLINE  (18)
+
+	END  shift 175
+	.  error
+
+
+state 104
+	number_list : '-' . number  (116)
+
+	INT_NUMBER  shift 52
+	REAL_NUMBER  shift 54
+	.  error
+
+	number  goto 176
+
+
+state 105
+	const : CONST ID '=' '[' number_list . ']'  (15)
+	number_list : number_list . ',' number  (117)
+	number_list : number_list . ',' '-' number  (118)
+
+	']'  shift 177
+	','  shift 178
+	.  error
+
+
+state 106
+	number_list : number .  (115)
+
+	.  reduce 115
+
+
+state 107
+	multi_atrib : ID '=' . value  (16)
+
+	INT_NUMBER  shift 52
+	STR  shift 53
+	REAL_NUMBER  shift 54
+	.  error
+
+	number  goto 56
+	value  goto 57
+
+
+state 108
+	multi_atrib : ID ',' multi_atrib ',' . value  (17)
+
+	INT_NUMBER  shift 52
+	STR  shift 53
+	REAL_NUMBER  shift 54
+	.  error
+
+	number  goto 56
+	value  goto 179
+
+
+state 109
+	id_list : id_list ',' ID .  (120)
+
+	.  reduce 120
+
+
+state 110
+	function_definition : REAL function NEWLINE NEWBLOCK compound_statement . END NEWLINE  (19)
+
+	END  shift 180
+	.  error
+
+
+state 111
+	declaration : INIT INTEGER ID '=' '[' . number_list ']'  (12)
+
+	INT_NUMBER  shift 52
+	REAL_NUMBER  shift 54
+	'-'  shift 104
+	.  error
+
+	number_list  goto 181
+	number  goto 106
+
+
+state 112
+	declaration : INIT ID '=' '[' number_list . ']'  (11)
+	number_list : number_list . ',' number  (117)
+	number_list : number_list . ',' '-' number  (118)
+
+	']'  shift 182
+	','  shift 178
+	.  error
+
+
+state 113
+	declaration : INIT REAL ID '=' '[' . number_list ']'  (13)
+
+	INT_NUMBER  shift 52
+	REAL_NUMBER  shift 54
+	'-'  shift 104
+	.  error
+
+	number_list  goto 183
+	number  goto 106
+
+
+state 114
+	if_statement : error ENDIF .  (66)
+
+	.  reduce 66
+
+
+state 115
+	lvalue : ID '[' . expression ']'  (108)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 184
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 116
+	function_call : ID '(' . expression_list ')'  (109)
+	function_call : ID '(' . ')'  (110)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	')'  shift 185
+	.  error
+
+	expression  goto 138
+	expression_list  goto 186
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 117
+	if_statement : IF expression . THEN ultra_statement ENDIF  (62)
+	if_statement : IF expression . THEN ultra_statement elif_statement ENDIF  (63)
+	if_statement : IF expression . THEN ultra_statement ELSE bonus_statement ENDIF  (64)
+	if_statement : IF expression . THEN ultra_statement elif_statement ELSE bonus_statement ENDIF  (65)
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	'!'  shift 143
+	OUT  shift 144
+	THEN  shift 187
+	OR_OP  shift 146
+	AND_OP  shift 147
+	EQ_OP  shift 148
+	NE_OP  shift 149
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	.  error
+
+
+state 118
+	do_while_statement : DO error . DONE  (52)
+
+	DONE  shift 188
+	.  error
+
+
+state 119
+	ultra_statement : NEWLINE . NEWBLOCK decl_var_list extra_statement_list  (43)
+	ultra_statement : NEWLINE . NEWBLOCK extra_statement_list  (44)
+
+	NEWBLOCK  shift 189
+	.  error
+
+
+state 120
+	do_while_statement : DO ultra_statement . UNTIL expression DONE  (50)
+	do_while_statement : DO ultra_statement . UNTIL expression ELSE bonus_statement DONE  (51)
+
+	UNTIL  shift 190
+	.  error
+
+
+state 121
+	while_statement : WHILE error . DONE  (49)
+
+	DONE  shift 191
+	.  error
+
+
+state 122
+	while_statement : WHILE expression . DO ultra_statement DONE  (47)
+	while_statement : WHILE expression . DO ultra_statement ELSE bonus_statement DONE  (48)
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	'!'  shift 143
+	OUT  shift 144
+	DO  shift 192
+	OR_OP  shift 146
+	AND_OP  shift 147
+	EQ_OP  shift 148
+	NE_OP  shift 149
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	.  error
+
+
+state 123
+	decl_var : VAR error . NEWLINE  (73)
+
+	NEWLINE  shift 193
+	.  error
+
+
+state 124
+	decl_var : VAR INTEGER . array_id_list NEWLINE  (71)
+
+	ID  shift 125
+	.  error
+
+	array_id_list  goto 194
+	lvalue  goto 128
+
+
+state 125
+	lvalue : ID .  (107)
+	lvalue : ID . '[' expression ']'  (108)
+	array_id_list : ID . '[' ']'  (126)
+
+	'['  shift 195
+	NEWLINE  reduce 107
+	','  reduce 107
+
+
+state 126
+	decl_var : VAR REAL . array_id_list NEWLINE  (72)
+
+	ID  shift 125
+	.  error
+
+	array_id_list  goto 196
+	lvalue  goto 128
+
+
+state 127
+	decl_var : VAR array_id_list . NEWLINE  (70)
+	array_id_list : array_id_list . ',' ID '[' ']'  (127)
+	array_id_list : array_id_list . ',' lvalue  (128)
+
+	NEWLINE  shift 197
+	','  shift 198
+	.  error
+
+
+state 128
+	array_id_list : lvalue .  (125)
+
+	.  reduce 125
+
+
+state 129
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : '+' expression .  (97)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	EXP  shift 160
+	'!'  reduce 97
+	OUT  reduce 97
+	ELSE  reduce 97
+	THEN  reduce 97
+	DO  reduce 97
+	DONE  reduce 97
+	NEWLINE  reduce 97
+	OR_OP  reduce 97
+	AND_OP  reduce 97
+	EQ_OP  reduce 97
+	NE_OP  reduce 97
+	IMPLICA  reduce 97
+	'<'  reduce 97
+	'>'  reduce 97
+	GE_OP  reduce 97
+	LE_OP  reduce 97
+	'+'  reduce 97
+	'-'  reduce 97
+	'*'  reduce 97
+	'/'  reduce 97
+	'%'  reduce 97
+	']'  reduce 97
+	','  reduce 97
+	')'  reduce 97
+	';'  reduce 97
+
+
+state 130
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : '-' expression .  (98)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	EXP  shift 160
+	'!'  reduce 98
+	OUT  reduce 98
+	ELSE  reduce 98
+	THEN  reduce 98
+	DO  reduce 98
+	DONE  reduce 98
+	NEWLINE  reduce 98
+	OR_OP  reduce 98
+	AND_OP  reduce 98
+	EQ_OP  reduce 98
+	NE_OP  reduce 98
+	IMPLICA  reduce 98
+	'<'  reduce 98
+	'>'  reduce 98
+	GE_OP  reduce 98
+	LE_OP  reduce 98
+	'+'  reduce 98
+	'-'  reduce 98
+	'*'  reduce 98
+	'/'  reduce 98
+	'%'  reduce 98
+	']'  reduce 98
+	','  reduce 98
+	')'  reduce 98
+	';'  reduce 98
+
+
+state 131
+	lvalue : ID .  (107)
+	lvalue : ID . '[' expression ']'  (108)
+
+	'['  shift 115
+	'!'  reduce 107
+	OUT  reduce 107
+	ELSE  reduce 107
+	THEN  reduce 107
+	DO  reduce 107
+	DONE  reduce 107
+	NEWLINE  reduce 107
+	OR_OP  reduce 107
+	AND_OP  reduce 107
+	EQ_OP  reduce 107
+	NE_OP  reduce 107
+	IMPLICA  reduce 107
+	'<'  reduce 107
+	'>'  reduce 107
+	GE_OP  reduce 107
+	LE_OP  reduce 107
+	'+'  reduce 107
+	'-'  reduce 107
+	'*'  reduce 107
+	'/'  reduce 107
+	'%'  reduce 107
+	EXP  reduce 107
+	']'  reduce 107
+	','  reduce 107
+	')'  reduce 107
+	';'  reduce 107
+
+
+state 132
+	expression : INC lvalue .  (76)
+
+	.  reduce 76
+
+
+state 133
+	expression : DEC lvalue .  (77)
+
+	.  reduce 77
+
+
+state 134
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : NOT expression .  (100)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	EXP  shift 160
+	'!'  reduce 100
+	OUT  reduce 100
+	ELSE  reduce 100
+	THEN  reduce 100
+	DO  reduce 100
+	DONE  reduce 100
+	NEWLINE  reduce 100
+	OR_OP  reduce 100
+	AND_OP  reduce 100
+	EQ_OP  reduce 100
+	NE_OP  reduce 100
+	IMPLICA  reduce 100
+	'<'  reduce 100
+	'>'  reduce 100
+	GE_OP  reduce 100
+	LE_OP  reduce 100
+	'+'  reduce 100
+	'-'  reduce 100
+	'*'  reduce 100
+	'/'  reduce 100
+	'%'  reduce 100
+	']'  reduce 100
+	','  reduce 100
+	')'  reduce 100
+	';'  reduce 100
+
+
+state 135
+	expression : '@' lvalue .  (99)
+
+	.  reduce 99
+
+
+state 136
+	for_statement : FOR error . DONE  (55)
+
+	DONE  shift 199
+	.  error
+
+
+state 137
+	for_start : ';' .  (57)
+
+	.  reduce 57
+
+
+state 138
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+	expression_list : expression .  (129)
+
+	'!'  shift 143
+	OUT  shift 144
+	OR_OP  shift 146
+	AND_OP  shift 147
+	EQ_OP  shift 148
+	NE_OP  shift 149
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	DO  reduce 129
+	','  reduce 129
+	')'  reduce 129
+	';'  reduce 129
+
+
+state 139
+	for_start : expression_list . ';'  (56)
+	expression_list : expression_list . ',' expression  (130)
+
+	','  shift 200
+	';'  shift 201
+	.  error
+
+
+state 140
+	for_statement : FOR for_start . cond iter DO ultra_statement DONE  (53)
+	for_statement : FOR for_start . cond iter DO NEWLINE DONE  (54)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	';'  shift 202
+	.  error
+
+	expression  goto 203
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	cond  goto 204
+
+
+state 141
+	statement : '[' ID . ']' EQ_OP expression NEWLINE  (37)
+
+	']'  shift 205
+	.  error
+
+
+state 142
+	expression : '(' expression . ')'  (75)
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	'!'  shift 143
+	OUT  shift 144
+	OR_OP  shift 146
+	AND_OP  shift 147
+	EQ_OP  shift 148
+	NE_OP  shift 149
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	')'  shift 206
+	.  error
+
+
+state 143
+	expression : expression '!' .  (101)
+
+	.  reduce 101
+
+
+state 144
+	expression : expression OUT .  (102)
+
+	.  reduce 102
+
+
+state 145
+	statement : expression NEWLINE .  (36)
+
+	.  reduce 36
+
+
+state 146
+	expression : expression OR_OP . expression  (89)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 207
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 147
+	expression : expression AND_OP . expression  (88)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 208
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 148
+	expression : expression EQ_OP . expression  (90)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 209
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 149
+	expression : expression NE_OP . expression  (91)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 210
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 150
+	expression : expression IMPLICA . expression  (96)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 211
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 151
+	expression : expression '<' . expression  (94)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 212
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 152
+	expression : expression '>' . expression  (95)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 213
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 153
+	expression : expression GE_OP . expression  (92)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 214
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 154
+	expression : expression LE_OP . expression  (93)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 215
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 155
+	expression : expression '+' . expression  (80)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 216
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 156
+	expression : expression '-' . expression  (81)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 217
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 157
+	expression : expression '*' . expression  (82)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 218
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 158
+	expression : expression '/' . expression  (83)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 219
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 159
+	expression : expression '%' . expression  (85)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 220
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 160
+	expression : expression EXP . expression  (84)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 221
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 161
+	statement_list : statement_list statement .  (138)
+
+	.  reduce 138
+
+
+state 162
+	function_definition : function NEWLINE NEWBLOCK compound_statement END . NEWLINE  (20)
+
+	NEWLINE  shift 222
+	.  error
+
+
+state 163
+	compound_statement : const_list NEWLINE . decl_var_list statement_list  (25)
+	compound_statement : const_list NEWLINE . statement_list  (26)
+	const_list : const_list NEWLINE . const  (134)
+
+	error  shift 69
+	CONST  shift 3
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	VAR  shift 78
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	.  error
+
+	expression  goto 88
+	statement  goto 89
+	statement_list  goto 223
+	const  goto 224
+	decl_var_list  goto 225
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	decl_var  goto 98
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 164
+	compound_statement : decl_var_list statement_list .  (27)
+	statement_list : statement_list . statement  (138)
+
+	error  shift 69
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	END  reduce 27
+
+	expression  goto 88
+	statement  goto 161
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 165
+	decl_var_list : decl_var_list decl_var .  (132)
+
+	.  reduce 132
+
+
+state 166
+	statement : if_statement NEWLINE .  (32)
+
+	.  reduce 32
+
+
+state 167
+	statement : while_statement NEWLINE .  (33)
+
+	.  reduce 33
+
+
+state 168
+	statement : do_while_statement NEWLINE .  (34)
+
+	.  reduce 34
+
+
+state 169
+	expression : lvalue '?' .  (103)
+
+	.  reduce 103
+
+
+state 170
+	expression : lvalue '=' . expression  (86)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 226
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 171
+	expression : lvalue ADDEDATTRIB . expression  (87)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 227
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 172
+	expression : lvalue INC .  (78)
+
+	.  reduce 78
+
+
+state 173
+	expression : lvalue DEC .  (79)
+
+	.  reduce 79
+
+
+state 174
+	statement : for_statement NEWLINE .  (35)
+
+	.  reduce 35
+
+
+state 175
+	function_definition : INTEGER function NEWLINE NEWBLOCK compound_statement END . NEWLINE  (18)
+
+	NEWLINE  shift 228
+	.  error
+
+
+state 176
+	number_list : '-' number .  (116)
+
+	.  reduce 116
+
+
+state 177
+	const : CONST ID '=' '[' number_list ']' .  (15)
+
+	.  reduce 15
+
+
+state 178
+	number_list : number_list ',' . number  (117)
+	number_list : number_list ',' . '-' number  (118)
+
+	INT_NUMBER  shift 52
+	REAL_NUMBER  shift 54
+	'-'  shift 229
+	.  error
+
+	number  goto 230
+
+
+state 179
+	multi_atrib : ID ',' multi_atrib ',' value .  (17)
+
+	.  reduce 17
+
+
+state 180
+	function_definition : REAL function NEWLINE NEWBLOCK compound_statement END . NEWLINE  (19)
+
+	NEWLINE  shift 231
+	.  error
+
+
+state 181
+	declaration : INIT INTEGER ID '=' '[' number_list . ']'  (12)
+	number_list : number_list . ',' number  (117)
+	number_list : number_list . ',' '-' number  (118)
+
+	']'  shift 232
+	','  shift 178
+	.  error
+
+
+state 182
+	declaration : INIT ID '=' '[' number_list ']' .  (11)
+
+	.  reduce 11
+
+
+state 183
+	declaration : INIT REAL ID '=' '[' number_list . ']'  (13)
+	number_list : number_list . ',' number  (117)
+	number_list : number_list . ',' '-' number  (118)
+
+	']'  shift 233
+	','  shift 178
+	.  error
+
+
+state 184
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+	lvalue : ID '[' expression . ']'  (108)
+
+	'!'  shift 143
+	OUT  shift 144
+	OR_OP  shift 146
+	AND_OP  shift 147
+	EQ_OP  shift 148
+	NE_OP  shift 149
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	']'  shift 234
+	.  error
+
+
+state 185
+	function_call : ID '(' ')' .  (110)
+
+	.  reduce 110
+
+
+state 186
+	function_call : ID '(' expression_list . ')'  (109)
+	expression_list : expression_list . ',' expression  (130)
+
+	','  shift 200
+	')'  shift 235
+	.  error
+
+
+state 187
+	if_statement : IF expression THEN . ultra_statement ENDIF  (62)
+	if_statement : IF expression THEN . ultra_statement elif_statement ENDIF  (63)
+	if_statement : IF expression THEN . ultra_statement ELSE bonus_statement ENDIF  (64)
+	if_statement : IF expression THEN . ultra_statement elif_statement ELSE bonus_statement ENDIF  (65)
+
+	NEWLINE  shift 119
+	.  error
+
+	ultra_statement  goto 236
+
+
+state 188
+	do_while_statement : DO error DONE .  (52)
+
+	.  reduce 52
+
+
+state 189
+	ultra_statement : NEWLINE NEWBLOCK . decl_var_list extra_statement_list  (43)
+	ultra_statement : NEWLINE NEWBLOCK . extra_statement_list  (44)
+
+	error  shift 69
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	BREAK  shift 237
+	CONTINUE  shift 238
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	VAR  shift 78
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	.  error
+
+	expression  goto 88
+	statement  goto 239
+	decl_var_list  goto 240
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	extra_statement  goto 241
+	extra_statement_list  goto 242
+	decl_var  goto 98
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 190
+	do_while_statement : DO ultra_statement UNTIL . expression DONE  (50)
+	do_while_statement : DO ultra_statement UNTIL . expression ELSE bonus_statement DONE  (51)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 243
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 191
+	while_statement : WHILE error DONE .  (49)
+
+	.  reduce 49
+
+
+state 192
+	while_statement : WHILE expression DO . ultra_statement DONE  (47)
+	while_statement : WHILE expression DO . ultra_statement ELSE bonus_statement DONE  (48)
+
+	NEWLINE  shift 119
+	.  error
+
+	ultra_statement  goto 244
+
+
+state 193
+	decl_var : VAR error NEWLINE .  (73)
+
+	.  reduce 73
+
+
+state 194
+	decl_var : VAR INTEGER array_id_list . NEWLINE  (71)
+	array_id_list : array_id_list . ',' ID '[' ']'  (127)
+	array_id_list : array_id_list . ',' lvalue  (128)
+
+	NEWLINE  shift 245
+	','  shift 198
+	.  error
+
+
+state 195
+	lvalue : ID '[' . expression ']'  (108)
+	array_id_list : ID '[' . ']'  (126)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	']'  shift 246
+	'('  shift 87
+	.  error
+
+	expression  goto 184
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 196
+	decl_var : VAR REAL array_id_list . NEWLINE  (72)
+	array_id_list : array_id_list . ',' ID '[' ']'  (127)
+	array_id_list : array_id_list . ',' lvalue  (128)
+
+	NEWLINE  shift 247
+	','  shift 198
+	.  error
+
+
+state 197
+	decl_var : VAR array_id_list NEWLINE .  (70)
+
+	.  reduce 70
+
+
+state 198
+	array_id_list : array_id_list ',' . ID '[' ']'  (127)
+	array_id_list : array_id_list ',' . lvalue  (128)
+
+	ID  shift 248
+	.  error
+
+	lvalue  goto 249
+
+
+state 199
+	for_statement : FOR error DONE .  (55)
+
+	.  reduce 55
+
+
+state 200
+	expression_list : expression_list ',' . expression  (130)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 250
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 201
+	for_start : expression_list ';' .  (56)
+
+	.  reduce 56
+
+
+state 202
+	cond : ';' .  (59)
+
+	.  reduce 59
+
+
+state 203
+	cond : expression . ';'  (58)
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	'!'  shift 143
+	OUT  shift 144
+	OR_OP  shift 146
+	AND_OP  shift 147
+	EQ_OP  shift 148
+	NE_OP  shift 149
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	';'  shift 251
+	.  error
+
+
+state 204
+	for_statement : FOR for_start cond . iter DO ultra_statement DONE  (53)
+	for_statement : FOR for_start cond . iter DO NEWLINE DONE  (54)
+	iter : .  (61)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	DO  reduce 61
+
+	expression  goto 138
+	expression_list  goto 252
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	iter  goto 253
+
+
+state 205
+	statement : '[' ID ']' . EQ_OP expression NEWLINE  (37)
+
+	EQ_OP  shift 254
+	.  error
+
+
+state 206
+	expression : '(' expression ')' .  (75)
+
+	.  reduce 75
+
+
+state 207
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression OR_OP expression .  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	AND_OP  shift 147
+	EQ_OP  shift 148
+	NE_OP  shift 149
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	'!'  reduce 89
+	OUT  reduce 89
+	ELSE  reduce 89
+	THEN  reduce 89
+	DO  reduce 89
+	DONE  reduce 89
+	NEWLINE  reduce 89
+	OR_OP  reduce 89
+	']'  reduce 89
+	','  reduce 89
+	')'  reduce 89
+	';'  reduce 89
+
+
+state 208
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression AND_OP expression .  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	EQ_OP  shift 148
+	NE_OP  shift 149
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	'!'  reduce 88
+	OUT  reduce 88
+	ELSE  reduce 88
+	THEN  reduce 88
+	DO  reduce 88
+	DONE  reduce 88
+	NEWLINE  reduce 88
+	OR_OP  reduce 88
+	AND_OP  reduce 88
+	']'  reduce 88
+	','  reduce 88
+	')'  reduce 88
+	';'  reduce 88
+
+
+state 209
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression EQ_OP expression .  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	'!'  reduce 90
+	OUT  reduce 90
+	ELSE  reduce 90
+	THEN  reduce 90
+	DO  reduce 90
+	DONE  reduce 90
+	NEWLINE  reduce 90
+	OR_OP  reduce 90
+	AND_OP  reduce 90
+	']'  reduce 90
+	','  reduce 90
+	')'  reduce 90
+	';'  reduce 90
+
+
+state 210
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression NE_OP expression .  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	'!'  reduce 91
+	OUT  reduce 91
+	ELSE  reduce 91
+	THEN  reduce 91
+	DO  reduce 91
+	DONE  reduce 91
+	NEWLINE  reduce 91
+	OR_OP  reduce 91
+	AND_OP  reduce 91
+	']'  reduce 91
+	','  reduce 91
+	')'  reduce 91
+	';'  reduce 91
+
+
+state 211
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression IMPLICA expression .  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	'!'  reduce 96
+	OUT  reduce 96
+	ELSE  reduce 96
+	THEN  reduce 96
+	DO  reduce 96
+	DONE  reduce 96
+	NEWLINE  reduce 96
+	OR_OP  reduce 96
+	AND_OP  reduce 96
+	EQ_OP  reduce 96
+	NE_OP  reduce 96
+	IMPLICA  reduce 96
+	']'  reduce 96
+	','  reduce 96
+	')'  reduce 96
+	';'  reduce 96
+
+
+state 212
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression '<' expression .  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	'!'  reduce 94
+	OUT  reduce 94
+	ELSE  reduce 94
+	THEN  reduce 94
+	DO  reduce 94
+	DONE  reduce 94
+	NEWLINE  reduce 94
+	OR_OP  reduce 94
+	AND_OP  reduce 94
+	EQ_OP  reduce 94
+	NE_OP  reduce 94
+	IMPLICA  reduce 94
+	']'  reduce 94
+	','  reduce 94
+	')'  reduce 94
+	';'  reduce 94
+
+
+state 213
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression '>' expression .  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	'!'  reduce 95
+	OUT  reduce 95
+	ELSE  reduce 95
+	THEN  reduce 95
+	DO  reduce 95
+	DONE  reduce 95
+	NEWLINE  reduce 95
+	OR_OP  reduce 95
+	AND_OP  reduce 95
+	EQ_OP  reduce 95
+	NE_OP  reduce 95
+	IMPLICA  reduce 95
+	']'  reduce 95
+	','  reduce 95
+	')'  reduce 95
+	';'  reduce 95
+
+
+state 214
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression GE_OP expression .  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	'!'  reduce 92
+	OUT  reduce 92
+	ELSE  reduce 92
+	THEN  reduce 92
+	DO  reduce 92
+	DONE  reduce 92
+	NEWLINE  reduce 92
+	OR_OP  reduce 92
+	AND_OP  reduce 92
+	EQ_OP  reduce 92
+	NE_OP  reduce 92
+	IMPLICA  reduce 92
+	']'  reduce 92
+	','  reduce 92
+	')'  reduce 92
+	';'  reduce 92
+
+
+state 215
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression LE_OP expression .  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	'!'  reduce 93
+	OUT  reduce 93
+	ELSE  reduce 93
+	THEN  reduce 93
+	DO  reduce 93
+	DONE  reduce 93
+	NEWLINE  reduce 93
+	OR_OP  reduce 93
+	AND_OP  reduce 93
+	EQ_OP  reduce 93
+	NE_OP  reduce 93
+	IMPLICA  reduce 93
+	']'  reduce 93
+	','  reduce 93
+	')'  reduce 93
+	';'  reduce 93
+
+
+state 216
+	expression : expression . '+' expression  (80)
+	expression : expression '+' expression .  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	'!'  reduce 80
+	OUT  reduce 80
+	ELSE  reduce 80
+	THEN  reduce 80
+	DO  reduce 80
+	DONE  reduce 80
+	NEWLINE  reduce 80
+	OR_OP  reduce 80
+	AND_OP  reduce 80
+	EQ_OP  reduce 80
+	NE_OP  reduce 80
+	IMPLICA  reduce 80
+	'<'  reduce 80
+	'>'  reduce 80
+	GE_OP  reduce 80
+	LE_OP  reduce 80
+	'+'  reduce 80
+	'-'  reduce 80
+	']'  reduce 80
+	','  reduce 80
+	')'  reduce 80
+	';'  reduce 80
+
+
+state 217
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression '-' expression .  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	'!'  reduce 81
+	OUT  reduce 81
+	ELSE  reduce 81
+	THEN  reduce 81
+	DO  reduce 81
+	DONE  reduce 81
+	NEWLINE  reduce 81
+	OR_OP  reduce 81
+	AND_OP  reduce 81
+	EQ_OP  reduce 81
+	NE_OP  reduce 81
+	IMPLICA  reduce 81
+	'<'  reduce 81
+	'>'  reduce 81
+	GE_OP  reduce 81
+	LE_OP  reduce 81
+	'+'  reduce 81
+	'-'  reduce 81
+	']'  reduce 81
+	','  reduce 81
+	')'  reduce 81
+	';'  reduce 81
+
+
+state 218
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression '*' expression .  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	EXP  shift 160
+	'!'  reduce 82
+	OUT  reduce 82
+	ELSE  reduce 82
+	THEN  reduce 82
+	DO  reduce 82
+	DONE  reduce 82
+	NEWLINE  reduce 82
+	OR_OP  reduce 82
+	AND_OP  reduce 82
+	EQ_OP  reduce 82
+	NE_OP  reduce 82
+	IMPLICA  reduce 82
+	'<'  reduce 82
+	'>'  reduce 82
+	GE_OP  reduce 82
+	LE_OP  reduce 82
+	'+'  reduce 82
+	'-'  reduce 82
+	'*'  reduce 82
+	'/'  reduce 82
+	'%'  reduce 82
+	']'  reduce 82
+	','  reduce 82
+	')'  reduce 82
+	';'  reduce 82
+
+
+state 219
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression '/' expression .  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	EXP  shift 160
+	'!'  reduce 83
+	OUT  reduce 83
+	ELSE  reduce 83
+	THEN  reduce 83
+	DO  reduce 83
+	DONE  reduce 83
+	NEWLINE  reduce 83
+	OR_OP  reduce 83
+	AND_OP  reduce 83
+	EQ_OP  reduce 83
+	NE_OP  reduce 83
+	IMPLICA  reduce 83
+	'<'  reduce 83
+	'>'  reduce 83
+	GE_OP  reduce 83
+	LE_OP  reduce 83
+	'+'  reduce 83
+	'-'  reduce 83
+	'*'  reduce 83
+	'/'  reduce 83
+	'%'  reduce 83
+	']'  reduce 83
+	','  reduce 83
+	')'  reduce 83
+	';'  reduce 83
+
+
+state 220
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression '%' expression .  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	EXP  shift 160
+	'!'  reduce 85
+	OUT  reduce 85
+	ELSE  reduce 85
+	THEN  reduce 85
+	DO  reduce 85
+	DONE  reduce 85
+	NEWLINE  reduce 85
+	OR_OP  reduce 85
+	AND_OP  reduce 85
+	EQ_OP  reduce 85
+	NE_OP  reduce 85
+	IMPLICA  reduce 85
+	'<'  reduce 85
+	'>'  reduce 85
+	GE_OP  reduce 85
+	LE_OP  reduce 85
+	'+'  reduce 85
+	'-'  reduce 85
+	'*'  reduce 85
+	'/'  reduce 85
+	'%'  reduce 85
+	']'  reduce 85
+	','  reduce 85
+	')'  reduce 85
+	';'  reduce 85
+
+
+state 221
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression EXP expression .  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	EXP  shift 160
+	'!'  reduce 84
+	OUT  reduce 84
+	ELSE  reduce 84
+	THEN  reduce 84
+	DO  reduce 84
+	DONE  reduce 84
+	NEWLINE  reduce 84
+	OR_OP  reduce 84
+	AND_OP  reduce 84
+	EQ_OP  reduce 84
+	NE_OP  reduce 84
+	IMPLICA  reduce 84
+	'<'  reduce 84
+	'>'  reduce 84
+	GE_OP  reduce 84
+	LE_OP  reduce 84
+	'+'  reduce 84
+	'-'  reduce 84
+	'*'  reduce 84
+	'/'  reduce 84
+	'%'  reduce 84
+	']'  reduce 84
+	','  reduce 84
+	')'  reduce 84
+	';'  reduce 84
+
+
+state 222
+	function_definition : function NEWLINE NEWBLOCK compound_statement END NEWLINE .  (20)
+
+	.  reduce 20
+
+
+state 223
+	compound_statement : const_list NEWLINE statement_list .  (26)
+	statement_list : statement_list . statement  (138)
+
+	error  shift 69
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	END  reduce 26
+
+	expression  goto 88
+	statement  goto 161
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 224
+	const_list : const_list NEWLINE const .  (134)
+
+	.  reduce 134
+
+
+state 225
+	compound_statement : const_list NEWLINE decl_var_list . statement_list  (25)
+	decl_var_list : decl_var_list . decl_var  (132)
+
+	error  shift 69
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	VAR  shift 78
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	.  error
+
+	expression  goto 88
+	statement  goto 89
+	statement_list  goto 255
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	decl_var  goto 165
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 226
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : lvalue '=' expression .  (86)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	OR_OP  shift 146
+	AND_OP  shift 147
+	EQ_OP  shift 148
+	NE_OP  shift 149
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	'!'  reduce 86
+	OUT  reduce 86
+	ELSE  reduce 86
+	THEN  reduce 86
+	DO  reduce 86
+	DONE  reduce 86
+	NEWLINE  reduce 86
+	']'  reduce 86
+	','  reduce 86
+	')'  reduce 86
+	';'  reduce 86
+
+
+state 227
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : lvalue ADDEDATTRIB expression .  (87)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	OR_OP  shift 146
+	AND_OP  shift 147
+	EQ_OP  shift 148
+	NE_OP  shift 149
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	'!'  reduce 87
+	OUT  reduce 87
+	ELSE  reduce 87
+	THEN  reduce 87
+	DO  reduce 87
+	DONE  reduce 87
+	NEWLINE  reduce 87
+	']'  reduce 87
+	','  reduce 87
+	')'  reduce 87
+	';'  reduce 87
+
+
+state 228
+	function_definition : INTEGER function NEWLINE NEWBLOCK compound_statement END NEWLINE .  (18)
+
+	.  reduce 18
+
+
+state 229
+	number_list : number_list ',' '-' . number  (118)
+
+	INT_NUMBER  shift 52
+	REAL_NUMBER  shift 54
+	.  error
+
+	number  goto 256
+
+
+state 230
+	number_list : number_list ',' number .  (117)
+
+	.  reduce 117
+
+
+state 231
+	function_definition : REAL function NEWLINE NEWBLOCK compound_statement END NEWLINE .  (19)
+
+	.  reduce 19
+
+
+state 232
+	declaration : INIT INTEGER ID '=' '[' number_list ']' .  (12)
+
+	.  reduce 12
+
+
+state 233
+	declaration : INIT REAL ID '=' '[' number_list ']' .  (13)
+
+	.  reduce 13
+
+
+state 234
+	lvalue : ID '[' expression ']' .  (108)
+
+	.  reduce 108
+
+
+state 235
+	function_call : ID '(' expression_list ')' .  (109)
+
+	.  reduce 109
+
+
+state 236
+	if_statement : IF expression THEN ultra_statement . ENDIF  (62)
+	if_statement : IF expression THEN ultra_statement . elif_statement ENDIF  (63)
+	if_statement : IF expression THEN ultra_statement . ELSE bonus_statement ENDIF  (64)
+	if_statement : IF expression THEN ultra_statement . elif_statement ELSE bonus_statement ENDIF  (65)
+
+	ELSE  shift 257
+	ELIF  shift 258
+	ENDIF  shift 259
+	.  error
+
+	elif_statement  goto 260
+	elif_def  goto 261
+
+
+state 237
+	extra_statement : BREAK . NEWLINE  (41)
+	extra_statement : BREAK . INT_NUMBER NEWLINE  (42)
+
+	INT_NUMBER  shift 262
+	NEWLINE  shift 263
+	.  error
+
+
+state 238
+	extra_statement : CONTINUE . NEWLINE  (39)
+	extra_statement : CONTINUE . INT_NUMBER NEWLINE  (40)
+
+	INT_NUMBER  shift 264
+	NEWLINE  shift 265
+	.  error
+
+
+state 239
+	extra_statement : statement .  (38)
+
+	.  reduce 38
+
+
+state 240
+	ultra_statement : NEWLINE NEWBLOCK decl_var_list . extra_statement_list  (43)
+	decl_var_list : decl_var_list . decl_var  (132)
+
+	error  shift 69
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	BREAK  shift 237
+	CONTINUE  shift 238
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	VAR  shift 78
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	.  error
+
+	expression  goto 88
+	statement  goto 239
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	extra_statement  goto 241
+	extra_statement_list  goto 266
+	decl_var  goto 165
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 241
+	extra_statement_list : extra_statement .  (135)
+
+	.  reduce 135
+
+
+state 242
+	ultra_statement : NEWLINE NEWBLOCK extra_statement_list .  (44)
+	extra_statement_list : extra_statement_list . extra_statement  (136)
+
+	error  shift 69
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	BREAK  shift 237
+	CONTINUE  shift 238
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	ELSE  reduce 44
+	ELIF  reduce 44
+	UNTIL  reduce 44
+	ENDIF  reduce 44
+	DONE  reduce 44
+
+	expression  goto 88
+	statement  goto 239
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	extra_statement  goto 267
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 243
+	do_while_statement : DO ultra_statement UNTIL expression . DONE  (50)
+	do_while_statement : DO ultra_statement UNTIL expression . ELSE bonus_statement DONE  (51)
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	'!'  shift 143
+	OUT  shift 144
+	ELSE  shift 268
+	DONE  shift 269
+	OR_OP  shift 146
+	AND_OP  shift 147
+	EQ_OP  shift 148
+	NE_OP  shift 149
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	.  error
+
+
+state 244
+	while_statement : WHILE expression DO ultra_statement . DONE  (47)
+	while_statement : WHILE expression DO ultra_statement . ELSE bonus_statement DONE  (48)
+
+	ELSE  shift 270
+	DONE  shift 271
+	.  error
+
+
+state 245
+	decl_var : VAR INTEGER array_id_list NEWLINE .  (71)
+
+	.  reduce 71
+
+
+state 246
+	array_id_list : ID '[' ']' .  (126)
+
+	.  reduce 126
+
+
+state 247
+	decl_var : VAR REAL array_id_list NEWLINE .  (72)
+
+	.  reduce 72
+
+
+state 248
+	lvalue : ID .  (107)
+	lvalue : ID . '[' expression ']'  (108)
+	array_id_list : array_id_list ',' ID . '[' ']'  (127)
+
+	'['  shift 272
+	NEWLINE  reduce 107
+	','  reduce 107
+
+
+state 249
+	array_id_list : array_id_list ',' lvalue .  (128)
+
+	.  reduce 128
+
+
+state 250
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+	expression_list : expression_list ',' expression .  (130)
+
+	'!'  shift 143
+	OUT  shift 144
+	OR_OP  shift 146
+	AND_OP  shift 147
+	EQ_OP  shift 148
+	NE_OP  shift 149
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	DO  reduce 130
+	','  reduce 130
+	')'  reduce 130
+	';'  reduce 130
+
+
+state 251
+	cond : expression ';' .  (58)
+
+	.  reduce 58
+
+
+state 252
+	iter : expression_list .  (60)
+	expression_list : expression_list . ',' expression  (130)
+
+	','  shift 200
+	DO  reduce 60
+
+
+state 253
+	for_statement : FOR for_start cond iter . DO ultra_statement DONE  (53)
+	for_statement : FOR for_start cond iter . DO NEWLINE DONE  (54)
+
+	DO  shift 273
+	.  error
+
+
+state 254
+	statement : '[' ID ']' EQ_OP . expression NEWLINE  (37)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 274
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 255
+	compound_statement : const_list NEWLINE decl_var_list statement_list .  (25)
+	statement_list : statement_list . statement  (138)
+
+	error  shift 69
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	END  reduce 25
+
+	expression  goto 88
+	statement  goto 161
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 256
+	number_list : number_list ',' '-' number .  (118)
+
+	.  reduce 118
+
+
+state 257
+	if_statement : IF expression THEN ultra_statement ELSE . bonus_statement ENDIF  (64)
+
+	NEWLINE  shift 275
+	.  error
+
+	bonus_statement  goto 276
+
+
+state 258
+	elif_def : ELIF . expression THEN ultra_statement  (67)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	'('  shift 87
+	.  error
+
+	expression  goto 277
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 259
+	if_statement : IF expression THEN ultra_statement ENDIF .  (62)
+
+	.  reduce 62
+
+
+state 260
+	if_statement : IF expression THEN ultra_statement elif_statement . ENDIF  (63)
+	if_statement : IF expression THEN ultra_statement elif_statement . ELSE bonus_statement ENDIF  (65)
+	elif_statement : elif_statement . elif_def  (69)
+
+	ELSE  shift 278
+	ELIF  shift 258
+	ENDIF  shift 279
+	.  error
+
+	elif_def  goto 280
+
+
+state 261
+	elif_statement : elif_def .  (68)
+
+	.  reduce 68
+
+
+state 262
+	extra_statement : BREAK INT_NUMBER . NEWLINE  (42)
+
+	NEWLINE  shift 281
+	.  error
+
+
+state 263
+	extra_statement : BREAK NEWLINE .  (41)
+
+	.  reduce 41
+
+
+state 264
+	extra_statement : CONTINUE INT_NUMBER . NEWLINE  (40)
+
+	NEWLINE  shift 282
+	.  error
+
+
+state 265
+	extra_statement : CONTINUE NEWLINE .  (39)
+
+	.  reduce 39
+
+
+state 266
+	ultra_statement : NEWLINE NEWBLOCK decl_var_list extra_statement_list .  (43)
+	extra_statement_list : extra_statement_list . extra_statement  (136)
+
+	error  shift 69
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	BREAK  shift 237
+	CONTINUE  shift 238
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	ELSE  reduce 43
+	ELIF  reduce 43
+	UNTIL  reduce 43
+	ENDIF  reduce 43
+	DONE  reduce 43
+
+	expression  goto 88
+	statement  goto 239
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	extra_statement  goto 267
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 267
+	extra_statement_list : extra_statement_list extra_statement .  (136)
+
+	.  reduce 136
+
+
+state 268
+	do_while_statement : DO ultra_statement UNTIL expression ELSE . bonus_statement DONE  (51)
+
+	NEWLINE  shift 275
+	.  error
+
+	bonus_statement  goto 283
+
+
+state 269
+	do_while_statement : DO ultra_statement UNTIL expression DONE .  (50)
+
+	.  reduce 50
+
+
+state 270
+	while_statement : WHILE expression DO ultra_statement ELSE . bonus_statement DONE  (48)
+
+	NEWLINE  shift 275
+	.  error
+
+	bonus_statement  goto 284
+
+
+state 271
+	while_statement : WHILE expression DO ultra_statement DONE .  (47)
+
+	.  reduce 47
+
+
+state 272
+	lvalue : ID '[' . expression ']'  (108)
+	array_id_list : array_id_list ',' ID '[' . ']'  (127)
+
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	']'  shift 285
+	'('  shift 87
+	.  error
+
+	expression  goto 184
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+
+
+state 273
+	for_statement : FOR for_start cond iter DO . ultra_statement DONE  (53)
+	for_statement : FOR for_start cond iter DO . NEWLINE DONE  (54)
+
+	NEWLINE  shift 286
+	.  error
+
+	ultra_statement  goto 287
+
+
+state 274
+	statement : '[' ID ']' EQ_OP expression . NEWLINE  (37)
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	'!'  shift 143
+	OUT  shift 144
+	NEWLINE  shift 288
+	OR_OP  shift 146
+	AND_OP  shift 147
+	EQ_OP  shift 148
+	NE_OP  shift 149
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	.  error
+
+
+state 275
+	bonus_statement : NEWLINE . NEWBLOCK decl_var_list statement_list  (45)
+	bonus_statement : NEWLINE . NEWBLOCK statement_list  (46)
+
+	NEWBLOCK  shift 289
+	.  error
+
+
+state 276
+	if_statement : IF expression THEN ultra_statement ELSE bonus_statement . ENDIF  (64)
+
+	ENDIF  shift 290
+	.  error
+
+
+state 277
+	elif_def : ELIF expression . THEN ultra_statement  (67)
+	expression : expression . '+' expression  (80)
+	expression : expression . '-' expression  (81)
+	expression : expression . '*' expression  (82)
+	expression : expression . '/' expression  (83)
+	expression : expression . EXP expression  (84)
+	expression : expression . '%' expression  (85)
+	expression : expression . AND_OP expression  (88)
+	expression : expression . OR_OP expression  (89)
+	expression : expression . EQ_OP expression  (90)
+	expression : expression . NE_OP expression  (91)
+	expression : expression . GE_OP expression  (92)
+	expression : expression . LE_OP expression  (93)
+	expression : expression . '<' expression  (94)
+	expression : expression . '>' expression  (95)
+	expression : expression . IMPLICA expression  (96)
+	expression : expression . '!'  (101)
+	expression : expression . OUT  (102)
+
+	'!'  shift 143
+	OUT  shift 144
+	THEN  shift 291
+	OR_OP  shift 146
+	AND_OP  shift 147
+	EQ_OP  shift 148
+	NE_OP  shift 149
+	IMPLICA  shift 150
+	'<'  shift 151
+	'>'  shift 152
+	GE_OP  shift 153
+	LE_OP  shift 154
+	'+'  shift 155
+	'-'  shift 156
+	'*'  shift 157
+	'/'  shift 158
+	'%'  shift 159
+	EXP  shift 160
+	.  error
+
+
+state 278
+	if_statement : IF expression THEN ultra_statement elif_statement ELSE . bonus_statement ENDIF  (65)
+
+	NEWLINE  shift 275
+	.  error
+
+	bonus_statement  goto 292
+
+
+state 279
+	if_statement : IF expression THEN ultra_statement elif_statement ENDIF .  (63)
+
+	.  reduce 63
+
+
+state 280
+	elif_statement : elif_statement elif_def .  (69)
+
+	.  reduce 69
+
+
+state 281
+	extra_statement : BREAK INT_NUMBER NEWLINE .  (42)
+
+	.  reduce 42
+
+
+state 282
+	extra_statement : CONTINUE INT_NUMBER NEWLINE .  (40)
+
+	.  reduce 40
+
+
+state 283
+	do_while_statement : DO ultra_statement UNTIL expression ELSE bonus_statement . DONE  (51)
+
+	DONE  shift 293
+	.  error
+
+
+state 284
+	while_statement : WHILE expression DO ultra_statement ELSE bonus_statement . DONE  (48)
+
+	DONE  shift 294
+	.  error
+
+
+state 285
+	array_id_list : array_id_list ',' ID '[' ']' .  (127)
+
+	.  reduce 127
+
+
+state 286
+	ultra_statement : NEWLINE . NEWBLOCK decl_var_list extra_statement_list  (43)
+	ultra_statement : NEWLINE . NEWBLOCK extra_statement_list  (44)
+	for_statement : FOR for_start cond iter DO NEWLINE . DONE  (54)
+
+	DONE  shift 295
+	NEWBLOCK  shift 189
+	.  error
+
+
+state 287
+	for_statement : FOR for_start cond iter DO ultra_statement . DONE  (53)
+
+	DONE  shift 296
+	.  error
+
+
+state 288
+	statement : '[' ID ']' EQ_OP expression NEWLINE .  (37)
+
+	.  reduce 37
+
+
+state 289
+	bonus_statement : NEWLINE NEWBLOCK . decl_var_list statement_list  (45)
+	bonus_statement : NEWLINE NEWBLOCK . statement_list  (46)
+
+	error  shift 69
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	VAR  shift 78
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	.  error
+
+	expression  goto 88
+	statement  goto 89
+	statement_list  goto 297
+	decl_var_list  goto 298
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	decl_var  goto 98
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 290
+	if_statement : IF expression THEN ultra_statement ELSE bonus_statement ENDIF .  (64)
+
+	.  reduce 64
+
+
+state 291
+	elif_def : ELIF expression THEN . ultra_statement  (67)
+
+	NEWLINE  shift 119
+	.  error
+
+	ultra_statement  goto 299
+
+
+state 292
+	if_statement : IF expression THEN ultra_statement elif_statement ELSE bonus_statement . ENDIF  (65)
+
+	ENDIF  shift 300
+	.  error
+
+
+state 293
+	do_while_statement : DO ultra_statement UNTIL expression ELSE bonus_statement DONE .  (51)
+
+	.  reduce 51
+
+
+state 294
+	while_statement : WHILE expression DO ultra_statement ELSE bonus_statement DONE .  (48)
+
+	.  reduce 48
+
+
+state 295
+	for_statement : FOR for_start cond iter DO NEWLINE DONE .  (54)
+
+	.  reduce 54
+
+
+state 296
+	for_statement : FOR for_start cond iter DO ultra_statement DONE .  (53)
+
+	.  reduce 53
+
+
+state 297
+	bonus_statement : NEWLINE NEWBLOCK statement_list .  (46)
+	statement_list : statement_list . statement  (138)
+
+	error  shift 69
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	ENDIF  reduce 46
+	DONE  reduce 46
+
+	expression  goto 88
+	statement  goto 161
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 298
+	bonus_statement : NEWLINE NEWBLOCK decl_var_list . statement_list  (45)
+	decl_var_list : decl_var_list . decl_var  (132)
+
+	error  shift 69
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	VAR  shift 78
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	.  error
+
+	expression  goto 88
+	statement  goto 89
+	statement_list  goto 301
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	decl_var  goto 165
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+state 299
+	elif_def : ELIF expression THEN ultra_statement .  (67)
+
+	.  reduce 67
+
+
+state 300
+	if_statement : IF expression THEN ultra_statement elif_statement ELSE bonus_statement ENDIF .  (65)
+
+	.  reduce 65
+
+
+state 301
+	bonus_statement : NEWLINE NEWBLOCK decl_var_list statement_list .  (45)
+	statement_list : statement_list . statement  (138)
+
+	error  shift 69
+	INT_NUMBER  shift 52
+	ID  shift 70
+	STR  shift 71
+	IF  shift 72
+	DO  shift 73
+	WHILE  shift 74
+	NEWLINE  shift 75
+	NEWBLOCK  shift 76
+	OLDBLOCK  shift 77
+	REAL_NUMBER  shift 54
+	'+'  shift 79
+	'-'  shift 80
+	INC  shift 81
+	DEC  shift 82
+	NOT  shift 83
+	'@'  shift 84
+	FOR  shift 85
+	'['  shift 86
+	'('  shift 87
+	ENDIF  reduce 45
+	DONE  reduce 45
+
+	expression  goto 88
+	statement  goto 161
+	if_statement  goto 95
+	while_statement  goto 96
+	do_while_statement  goto 97
+	function_call  goto 99
+	lvalue  goto 100
+	number  goto 101
+	for_statement  goto 102
+
+
+101 terminals, 37 nonterminals
+139 grammar rules, 302 states

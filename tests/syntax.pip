@@ -1,0 +1,42 @@
+const grosa := 144
+const pi := 3.1415926535
+const valores := [ 1, 2.4, 3.6, 5 ]
+const dias, horas, minutos, segundos := 7, 24, 60, 60
+const mes, dias := ’Abril’, 30
+init meses := [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ]
+init dias := [ 365 ]
+
+start()
+  var dias, horas
+  var integer minutos, segundos
+  var real comprimento, altura
+  var pilha[20], aux[]
+  var real coordenadas[3], base[12]
+  var i, j, a
+  var ano, dia
+
+  ’ ’ * (i * 2) !
+
+  a := base[i] := i := j + 5
+
+
+  if ano > 2006 and ano <= 2010 and dia >= 1 \
+	and ( mes = 1 or mes = 3 or mes = 5 or mes = 7 \
+      or mes = 8 or mes = 10 or mes = 12 and dia <= 31) \
+    or ( mes = 4 or mes = 6 or mes = 9 or mes = 11 and dia <= 30 )\
+      or mes = 8 or mes = 10 or mes = 12 and dia <= 31) \
+	or mes = 2 and ( ano = 2008 and dia <= 29 or ano <> 2008 \
+	and dia <= 28 ) then
+  	’dia correcto\n’ !
+  else
+	’dia errado\n’ !
+  endif
+end
+
+max(a, b)
+  if a > b then
+      a
+  else
+    b
+  endif
+end

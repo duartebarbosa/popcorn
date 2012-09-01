@@ -1,0 +1,23 @@
+# Cálculo recursivo da função do factorial
+
+extern integer argc()
+extern integer argv(index) { returns a string reference as an integer }
+extern integer atoi(string)
+
+factorial(n)
+  if n > 1 then
+    factorial := n * factorial(n-1)
+  else
+    factorial := n
+  endif
+end
+
+init f := [ 5 ]
+
+start()
+  if argc() = 2 then
+    f := atoi(argv(1))
+  endif
+  '' + f + '! = ' + factorial (f) !!
+  start := 0
+end

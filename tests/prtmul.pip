@@ -1,0 +1,4 @@
+start()
+  ' ' * 3 + 'hello'!!
+  start:=0
+end

@@ -1,0 +1,32 @@
+# Cálculo do maior divisor comum
+
+gcd(a, b)
+  var m
+  if a < b then
+    m := a
+  else
+    m := b
+  endif
+
+  while m > 1 do
+    if a % m = 0 and b % m = 0 then
+      gcd := m
+      break
+    endif
+    m:=m-1
+  else
+    gcd := 1
+  done
+end
+
+start()
+  var a, b
+  'Introduza dois números inteiros positivos: '!
+  if a? <> 1 or a <= 0 or b? <> 1 or b <= 0 then
+    start := 1
+  else
+    'O maior divisor comum entre '+a+' e '+b+' é '+gcd(a,b)!!
+    start := 0
+  endif
+end
+

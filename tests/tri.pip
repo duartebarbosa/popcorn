@@ -1,0 +1,33 @@
+# Classificador de triângulos
+start()
+ var a, b, c, s
+ do
+  'Introduza as dimensões dos três lados do triângulo: ' !
+ until a? + b? + c? <> 3 done
+ s := 0
+ if a >= b+c or  b >= a+c or  c >= b+a then
+   'Não é triângulo'!!
+   start := 0
+ else
+   if a = b then
+     s++
+   endif
+   if c = b then
+     s++
+   endif
+   if a = c then
+     s++
+   endif
+   if s = 0 then
+     'O triângulo é escaleno'!!
+   else
+     if s = 1 then
+       'O triângulo é isósceles'!!
+     else
+       'O triângulo é equilátero'!!
+     endif
+   endif
+ endif
+ start := 0
+end
+

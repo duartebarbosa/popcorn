@@ -1,0 +1,8 @@
+start()
+	var a, b
+	'Indique dois numeros: '!
+	if a? = 1 and b? = 1 then
+		a + '^' + b + '=' + a**b !!
+	endif
+	start:=0
+end

@@ -1,0 +1,10 @@
+start()
+  var x, m, n
+  m := n := 0
+  while x? > 0 and x >= 0 do
+    m := m + x
+    n++
+  done
+  'mean(#'+n+') = '+m/n!!
+  start:=0
+end

@@ -1,0 +1,19 @@
+# Cálculo de Pi por desenvolvimento em série
+init real pi := [ 0 ]
+real start()
+  var i, n
+
+  'Cálculo de Pi por desenvolvimento em série\n\
+ Indique o número de iterações: '!
+
+  if i? > 0 then
+      n := 1
+      while n < i do
+	  pi := pi + -1.0**(n-1)/(2*n-1)
+          n++
+      done
+      'Pi = ' + pi * 4!!
+  else
+    'O número de iterações deve ser um inteiro positivo\n'!
+  endif
+end

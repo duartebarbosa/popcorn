@@ -1,0 +1,10 @@
+
+start()
+
+	var a
+	a := 1 + 2 - 3
+	if(a) then
+		'hello ' + a!!
+	endif
+	start :=0
+end

@@ -1,0 +1,21 @@
+# Cálculo iterativo do factorial
+
+extern integer argc(), atoi(string)
+extern integer argv(index) { returns a string reference as an integer }
+
+start()
+ var f, n, i
+ if argc() = 2 then
+   n := atoi(argv(1))
+ else
+     n := 5
+ endif
+ f := i := n
+ while i > 2 do
+   i := i - 1
+   f := f * i
+ done
+ n + '! = ' + f !!
+ start := 0
+end
+

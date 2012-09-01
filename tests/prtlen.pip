@@ -1,0 +1,6 @@
+# imprime os caracteres que imprimiu antes
+start()
+   	(('abc'!)+'' !)+'' !!
+	start:=0
+end
+

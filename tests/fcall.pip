@@ -1,0 +1,17 @@
+h()
+ 'h'!!
+ h:=12
+end
+g()
+ 'g'!!
+ g:=24
+end
+i(a,b)
+ 'i'!!
+ i:=a-b
+end
+start()
+  ''+i(g(),h())!!
+  start:=0
+end
+ 

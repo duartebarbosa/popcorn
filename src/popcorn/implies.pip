@@ -1,0 +1,13 @@
+start()
+
+  var a, b, c, d
+  a := (0 => 0)
+  b := (1 => 1)
+  c := (1 => 0)
+  d := (0 => 1)
+  a + ' true'!!
+  b + ' true'!!
+  c + ' false'!!
+  d + ' true'!!
+  start := 3
+end

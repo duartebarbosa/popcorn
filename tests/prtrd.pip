@@ -1,0 +1,5 @@
+start()
+  var x
+  x?+x+''!!
+  start := 0
+end

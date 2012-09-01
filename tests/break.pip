@@ -1,0 +1,30 @@
+start()
+  var integer x, y, z
+
+  x := y := z := 0
+  while x < 100 do
+    x := x + 5
+    while y < 50 do
+      y := y + 3
+      while z < 20 do
+	z := z + 1
+        if z > 18 then
+	  break 3
+	endif
+	if z > 12 then
+	  break 2
+	endif
+	if z > 10 then
+	  break
+	endif
+	if z > 3 * y then
+	  continue 2
+	endif
+	'z='+z!!
+      done
+      'y='+y!!
+    done
+    'x='+x!!
+  done
+  start := 0
+end

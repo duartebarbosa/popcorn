@@ -1,0 +1,111 @@
+{	POPCORN COMPILER - QSORT dsrb@Skywalker IST-TP LEIC n.º 65893  - 2010
+
+			QUICKSORT - PIPOCA IMPLEMENTATION
+
+}
+
+
+start()
+
+	var arr[], buffer[10], auxiliar [], left, right, i, tmp, temp, n
+
+	'QuickSort em Pipoca - DSRB' !!
+
+	i := 0
+	left := i
+	tmp := 10
+
+	while (n? <> -1) do
+		if (i = 10) then
+			var aux[tmp] 
+			i := 0 
+			while(i <> 10) do
+				aux[i] := buffer[i]
+				i++
+			done
+			tmp = tmp + 10
+			[arr] = tmp
+			i := 0
+			while(i <> 10) do
+				arr[i] := aux[i]
+			done
+			
+		else
+			buffer[i] := n
+			i++
+		endif
+	done
+
+	temp := i + tmp
+	i := 0
+
+	[auxiliar] = tmp
+	
+	while(i <> tmp) do
+		auxiliar[i] := arr[i]
+		i++
+	done
+
+	[arr] = temp
+	
+	i := 0
+	while(i <> tmp) do
+		arr[i] := auxiliar[i]
+		i++
+	done	
+
+	while(i <> temp) do
+		arr[i] := buffer[i]
+		i++
+	done
+		
+	right := tmp
+
+	quicksort(arr, left, right)
+
+	'Ordenados : ' !
+	i := 0
+	while(i <> temp) do
+		arr [ i ] + ' ' !
+	done
+
+	start := 0
+end
+
+
+
+integer quicksort(arr, left, right)
+
+		var i, j, tmp, pivot
+
+		i := left
+		j := right
+		pivot := arr[(left + right) / 2]
+
+		# partition
+		while i <= j do
+			while arr[i] < pivot do
+				i++
+			done
+			while arr[j] > pivot do
+				j--
+			done
+			if i <= j then
+				tmp := arr[i]
+				arr[i] := arr[j]
+				arr[j] := tmp
+				i++
+				j--
+			endif
+		done
+
+		# recursion
+		if left < j then
+			quicksort(arr[], left, j)
+		endif
+		if i < right then
+			quicksort(arr[], i, right)
+		endif
+end
+
+

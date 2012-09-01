@@ -1,0 +1,39 @@
+
+%left AND_OP
+%left OR_OP
+%left '+' '-'
+%left '*' '/' '%'
+%left ID STR CSTR INT_NUMBER REAL_NUMBER function_priority parentesis array_priority
+
+%right '='
+%right identity simetric NOT
+%right  EXP
+%nonassoc ',' '@' '?' '!' '<' '>' GE_OP LE_OP INC DEC OUT NEWLINE
+%nonassoc EQ_OP NE_OP
+%left IMPLICA
+
+
+
+char *workoutLine (const char *s){
+
+	int lenght = strlen(s), i = 0, index = 0;
+	char *string = (char*) malloc(lenght * sizeof(char*));
+	
+	for(; i < lenght; i++){
+		switch(s[i])
+			case '\n'
+				string[index] = 10;
+				...
+		string[index] = s[i];
+	
+	}
+
+	return s;
+}
+
+
+
+
+
+
+if (p->SUB(i)->SUB(0)->attrib == IDLVALUE || p->SUB(i)->SUB(0)->attrib == IDARRAY || p->SUB(i)->SUB(0)->attrib == IDARRAYINDEX){
